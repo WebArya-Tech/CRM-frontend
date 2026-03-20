@@ -6,9 +6,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 
 const contactInfo = [
-  { icon: MapPin, label: "Address", value: "123 Education Lane, Knowledge Park, Delhi 110001" },
-  { icon: Phone, label: "Phone", value: "+91 98765 43210" },
-  { icon: Mail, label: "Email", value: "info@educoach.in" },
+  { icon: MapPin, label: "Address", value: "Assured Experts, No. 81, Ground Floor, Share Space, Borewell Road, Whitefield, Bangalore - 560066" },
+  { icon: Phone, label: "Phone", value: "+91 91 87385 124" },
+  { icon: Mail, label: "Email", value: "assuredexperts1@gmail.com" },
   { icon: Clock, label: "Hours", value: "Mon - Sat: 8:00 AM - 8:00 PM" },
 ];
 
@@ -34,7 +34,7 @@ export default function Contact() {
             transition={{ duration: 0.5 }}
           >
             <h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-              Get in <span className="text-gradient">Touch</span>
+              Connect with <span className="text-gradient">Assured Experts</span>
             </h1>
             <p className="mt-6 text-xl text-muted-foreground max-w-2xl mx-auto">
               Have questions about our programs or want to schedule a demo? We'd love to hear from you.
@@ -132,10 +132,11 @@ export default function Contact() {
               <div className="absolute inset-0 bg-muted flex flex-col items-center justify-center text-center p-8">
                 <MapPin className="h-12 w-12 text-primary mb-4 opacity-20" />
                 <p className="text-lg font-bold text-muted-foreground">Map will be loaded here</p>
-                <p className="text-sm text-muted-foreground mt-2">123 Education Lane, Knowledge Park, Delhi 110001</p>
+                <p className="text-sm text-muted-foreground mt-2">Borewell Road, Whitefield, Bangalore - 560066
+</p>
               </div>
               <img 
-                src="https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&q=80&w=1470" 
+                src="https://www.google.com/maps/place/Borewell+Rd,+Whitefield,+Bengaluru,+Karnataka+560066/@12.9675824,77.7426514,16.07z/data=!4m6!3m5!1s0x3bae1207529d557f:0x6bb971fe4b3c9d69!8m2!3d12.9691593!4d77.7427492!16s%2Fg%2F1vq738qb?entry=ttu&g_ep=EgoyMDI2MDMxNy4wIKXMDSoASAFQAw%3D%3D" 
                 alt="Office Location" 
                 className="h-full w-full object-cover"
               />

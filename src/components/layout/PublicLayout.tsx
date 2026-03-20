@@ -17,7 +17,7 @@ export function PublicLayout() {
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl gradient-primary shadow-md">
                   <GraduationCap className="h-5 w-5 text-primary-foreground" />
                 </div>
-                <span className="text-xl font-bold tracking-tight text-foreground">EduCoach</span>
+                <span className="text-xl font-bold tracking-tight text-foreground">Assured Experts</span>
               </Link>
               <p className="text-sm leading-relaxed text-muted-foreground max-w-xs">
                 Empowering students to achieve their academic dreams through expert mentorship and personalized learning paths.
@@ -62,15 +62,15 @@ export function PublicLayout() {
               <ul className="space-y-4">
                 <li className="flex items-start gap-3">
                   <MapPin className="h-5 w-5 shrink-0 text-primary" />
-                  <span className="text-sm text-muted-foreground">123 Education Hub, Knowledge Park, New Delhi, India</span>
+                  <span className="text-sm text-muted-foreground">Assured Experts, No. 81, Ground Floor, Share Space, Borewell Road, Whitefield, Bangalore - 560066</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <Phone className="h-5 w-5 shrink-0 text-primary" />
-                  <span className="text-sm text-muted-foreground">+91 98765 43210</span>
+                  <span className="text-sm text-muted-foreground">+91 91 87385 124</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <Mail className="h-5 w-5 shrink-0 text-primary" />
-                  <span className="text-sm text-muted-foreground">info@educoach.com</span>
+                  <span className="text-sm text-muted-foreground">assuredexperts1@gmail.com</span>
                 </li>
               </ul>
             </div>

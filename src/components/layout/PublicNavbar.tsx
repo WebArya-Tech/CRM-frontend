@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "../ThemeToggle";
+const logo = "/image2.png";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -21,12 +22,11 @@ export function PublicNavbar() {
     <nav className="sticky top-0 z-50 border-b border-border/40 bg-card/70 backdrop-blur-xl">
       <div className="mx-auto flex h-20 max-w-[1400px] items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link to="/" className="flex items-center gap-3 group">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl gradient-primary shadow-lg group-hover:scale-105 transition-transform duration-300">
-            <GraduationCap className="h-6 w-6 text-primary-foreground" />
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white shadow-lg group-hover:scale-105 transition-transform duration-300">
+            <img src={logo} alt="Assured Experts" className="h-8 w-8" />
           </div>
           <div className="flex flex-col">
-            <span className="text-xl font-black tracking-tight text-foreground leading-none">EduCoach</span>
-            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Academy</span>
+            <span className="text-xl font-black tracking-tight text-foreground leading-none">Assured Experts</span>
           </div>
         </Link>
 
@@ -61,11 +61,7 @@ export function PublicNavbar() {
               Login
             </Button>
           </Link>
-          <Link to="/contact">
-            <Button className="gradient-primary border-0 text-primary-foreground font-bold px-6 shadow-md hover:shadow-primary/20 transition-all">
-              Join Now
-            </Button>
-          </Link>
+
         </div>
 
         {/* Mobile toggle */}

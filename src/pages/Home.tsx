@@ -75,28 +75,12 @@ export default function Home() {
               transition={{ duration: 0.7, delay: 0.2 }}
               className="relative"
             >
-              <div className="relative z-10 overflow-hidden rounded-2xl border border-white/10 shadow-2xl">
+              <div className="relative z-10 overflow-hidden rounded-2xl border border-white/10 shadow-2xl bg-white">
                 <img 
-                  src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=1470" 
-                  alt="Students studying together" 
-                  className="h-full w-full object-cover aspect-[4/3]"
+                  src="/image3.png" 
+                  alt="Assured Experts Team" 
+                  className="w-full h-auto object-contain aspect-[4/3]"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-              </div>
-              
-              {/* Decorative elements */}
-              <div className="absolute -bottom-6 -left-6 z-20 hidden sm:block">
-                <div className="glass rounded-xl p-4 shadow-card">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-success/10 text-success">
-                      <CheckCircle className="h-6 w-6" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold text-card-foreground">Success Guaranteed</p>
-                      <p className="text-xs text-muted-foreground">Proven methodology</p>
-                    </div>
-                  </div>
-                </div>
               </div>
 
               <div className="absolute -top-6 -right-6 z-0 h-32 w-32 rounded-full bg-primary/20 blur-3xl" />
@@ -140,7 +124,7 @@ export default function Home() {
             className="text-center mb-16"
           >
             <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
-              Why Choose <span className="text-gradient">EduCoach?</span>
+              Why Choose <span className="text-gradient">Assured Experts?</span>
             </h2>
             <p className="mt-4 text-xl text-muted-foreground max-w-2xl mx-auto">
               We combine expert mentorship with cutting-edge technology to deliver results that speak for themselves.
@@ -192,7 +176,7 @@ export default function Home() {
                   {[
                     { title: "Course 1 Success", desc: "Top 500 National Rank Achievers", color: "bg-blue-500/10 text-blue-600" },
                     { title: "Course 2 Result", desc: "98% students achieved target scores", color: "bg-emerald-500/10 text-emerald-600" },
-                    { title: "Course 3 Outcome", desc: "Average improvement: 35%", color: "bg-amber-500/10 text-amber-600" }
+                    { title: "Course 3 Outcome", desc: "Average improvement: 35%", color: "bg-amber-500/10 text-emerald-600" }
                   ].map((item, i) => (
                     <motion.div 
                       key={item.title}
@@ -230,6 +214,25 @@ export default function Home() {
               </div>
             </motion.div>
           </div>
+        </div>
+      </section>
+
+      {/* Professional Banner Section */}
+      <section className="py-24 bg-card/10">
+        <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 text-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="relative rounded-3xl overflow-hidden border border-border/50 shadow-2xl bg-white"
+          >
+            <img 
+              src="/image4.jpeg" 
+              alt="Assured Experts - Trusted Professionals" 
+              className="w-full h-auto object-contain"
+            />
+          </motion.div>
         </div>
       </section>
     </div>

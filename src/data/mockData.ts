@@ -8,7 +8,7 @@ export const teachers: Teacher[] = [
   {
     teacherId: "TCH-000001",
     name: "Dr. Ananya Sharma",
-    email: "ananya@institute.com",
+    email: "ananya@assuredexperts.com",
     mobile: "+91 98765 43210",
     subjects: ["Subject 1", "Subject 2"],
     compensationPerHour: 800,

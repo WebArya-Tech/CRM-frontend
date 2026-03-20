@@ -42,7 +42,7 @@ export default function LoginLanding() {
       <div className="w-full max-w-6xl">
         {/* Header */}
         <div className="text-center mb-12 space-y-2">
-          <h1 className="text-4xl font-bold text-gradient">Welcome to EduCoach</h1>
+          <h1 className="text-4xl font-bold text-gradient">Welcome to Assured Experts</h1>
           <p className="text-lg text-muted-foreground">
             Select your role to login to your dashboard
           </p>

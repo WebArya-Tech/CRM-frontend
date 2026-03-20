@@ -20,10 +20,10 @@ export default function About() {
             transition={{ duration: 0.6 }}
           >
             <h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-              About <span className="text-gradient">EduCoach</span>
+              About <span className="text-gradient">Assured Experts</span>
             </h1>
-            <p className="mt-8 text-xl text-muted-foreground leading-relaxed">
-              Founded in 2018, EduCoach has been a beacon of academic excellence, helping students achieve their dreams through personalized coaching and expert mentorship.
+            <p className="mt-6 text-xl text-muted-foreground leading-relaxed">
+              Founded in 2018, Assured Experts has been a beacon of academic excellence, helping students achieve their dreams through personalized coaching and expert mentorship.
             </p>
             <p className="mt-6 text-lg text-muted-foreground leading-relaxed">
               We believe that every student has unique potential. Our mission is to provide the tools, guidance, and environment necessary for that potential to flourish.
@@ -36,11 +36,11 @@ export default function About() {
             transition={{ duration: 0.6 }}
             className="relative"
           >
-            <div className="relative z-10 overflow-hidden rounded-3xl border border-border/50 shadow-2xl">
+            <div className="relative z-10 overflow-hidden rounded-3xl border border-border/50 shadow-2xl bg-white">
               <img 
-                src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=1471" 
-                alt="Our Team" 
-                className="h-full w-full object-cover aspect-video lg:aspect-square"
+                src="/image3.png" 
+                alt="Assured Experts Team" 
+                className="w-full h-auto object-contain aspect-video lg:aspect-square"
               />
             </div>
             <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-primary/10 blur-3xl" />

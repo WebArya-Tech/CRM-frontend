@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "../ThemeToggle";
+const logo = "/image1.jpeg";
 
 interface NavItem {
   label: string;
@@ -68,10 +69,10 @@ export function DashboardLayout({ role }: { role: "admin" | "teacher" | "student
       >
         {/* Logo */}
         <div className="flex h-16 items-center gap-2.5 border-b border-sidebar-border px-4">
-          <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-lg shadow-sm", config.color)}>
-            <GraduationCap className="h-5 w-5 text-primary-foreground" />
+          <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-lg shadow-sm bg-white", config.color)}>
+            <img src={logo} alt="Assured Experts" className="h-6 w-6" />
           </div>
-          {!collapsed && <span className="font-bold text-foreground">EduCoach</span>}
+          {!collapsed && <span className="font-bold text-foreground">Assured Experts</span>}
         </div>
 
         {/* Role label */}

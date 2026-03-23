@@ -1,0 +1,6 @@
+services:
+  crm-frontend:
+    build: .
+    ports:
+      - "9089:80"
+    restart: unless-stopped

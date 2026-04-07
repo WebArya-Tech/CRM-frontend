@@ -1,48 +1,33 @@
-###############################################
-# CRM Frontend — Production Dockerfile
-# Multi-stage: build with Node, serve with nginx
-###############################################
-
-# ---- Stage 1: Install dependencies ----
-FROM node:20-alpine AS deps
+# Build stage
+FROM node:18-alpine AS builder
 
 WORKDIR /app
 
-COPY package.json package-lock.json* ./
-RUN npm cache clean --force && npm ci --ignore-scripts --cache /tmp/.npm
+# Copy package files
+COPY package.json bun.lockb ./
 
-# ---- Stage 2: Build the Vite app ----
-FROM node:20-alpine AS builder
+# Install dependencies
+RUN npm install
 
-WORKDIR /app
-
-COPY --from=deps /app/node_modules ./node_modules
+# Copy source code
 COPY . .
 
-ARG VITE_API_URL=/api
-ENV VITE_API_URL=${VITE_API_URL}
-
+# Build the application
 RUN npm run build
 
-# ---- Stage 3: Serve with nginx ----
-FROM nginx:1.27-alpine AS production
+# Production stage
+FROM node:18-alpine
 
-LABEL maintainer="CRM Team"
-LABEL description="CRM Frontend — React SPA served via nginx"
+WORKDIR /app
 
-RUN apk add --no-cache gettext
+# Install serve package to run the frontend
+RUN npm install -g serve
 
-RUN rm -rf /usr/share/nginx/html/*
+# Copy built application from builder stage
+COPY --from=builder /app/dist ./dist
 
-COPY --from=builder /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/templates/default.conf.template
-COPY nginx-ssl.conf /etc/nginx/nginx-ssl.conf.template
+# Expose port 9089
+EXPOSE 9089
 
-ENV DOMAIN=localhost
-
-EXPOSE 80 443
-
-HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
-  CMD wget -qO- http://localhost:80/ || exit 1
-
-CMD ["nginx", "-g", "daemon off;"]
+# Start the application
+CMD ["serve", "-s", "dist", "-l", "9089"]

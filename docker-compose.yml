@@ -1,6 +1,23 @@
+version: "3.9"
+
 services:
-  crm-frontend:
-    build: .
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: crm-frontend
     ports:
-      - "9089:80"
+      - "9089:9089"
+    environment:
+      - NODE_ENV=${NODE_ENV:-production}
+      - VITE_API_URL=${VITE_API_URL}
+      - VITE_APP_NAME=${VITE_APP_NAME}
     restart: unless-stopped
+    networks:
+      - crm-network
+    env_file:
+      - .env
+
+networks:
+  crm-network:
+    driver: bridge

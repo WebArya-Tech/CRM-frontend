@@ -1,7 +1,7 @@
 // ============= API SERVICE =============
 // Handles all API calls to the backend
 
-const VITE_API_URL = import.meta.env.VITE_API_URL || "http://localhost:8099/api";
+const VITE_API_URL = "https://api.assuredexperts.com/api";
 
 // ============= AUTHENTICATION HELPERS =============
 const getAuthToken = () => localStorage.getItem('authToken');

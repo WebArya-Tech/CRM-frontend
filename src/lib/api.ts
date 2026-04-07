@@ -1,7 +1,7 @@
 // ============= API SERVICE =============
 // Handles all API calls to the backend
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8099/api";
 
 // ============= AUTHENTICATION HELPERS =============
 const getAuthToken = () => localStorage.getItem('authToken');
@@ -439,6 +439,16 @@ export const courseAPI = {
     return handleResponse(response);
   },
 
+  // Create batch courses (group classes — one course per student)
+  async createBatch(batchData: Record<string, any>) {
+    const response = await fetch(`${API_BASE_URL}/courses/batch`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...getAuthHeader() },
+      body: JSON.stringify(batchData),
+    });
+    return handleResponse(response);
+  },
+
   // Update course
   async update(courseId: string, updateData: Record<string, any>) {
     const response = await fetch(`${API_BASE_URL}/courses/${courseId}`, {
@@ -552,6 +562,16 @@ export const classAPI = {
       method: "PATCH",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
       body: JSON.stringify({ reason }),
+    });
+    return handleResponse(response);
+  },
+
+  // Update class status (supports 1-minute teacher edit window)
+  async updateStatus(classId: string, status: string, reason?: string) {
+    const response = await fetch(`${API_BASE_URL}/classes/${classId}/status`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", ...getAuthHeader() },
+      body: JSON.stringify({ status, reason }),
     });
     return handleResponse(response);
   },
@@ -929,6 +949,69 @@ export const invoiceAPI = {
       method: "POST",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
       body: JSON.stringify(paymentData),
+    });
+    return handleResponse(response);
+  },
+};
+
+// ============= PUBLIC SERVICE ENDPOINTS =============
+export const publicServiceAPI = {
+  // Get all active services for public site
+  async getAll() {
+    const response = await fetch(`${API_BASE_URL}/public-services`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+    return handleResponse(response);
+  },
+
+  // Get all services (including inactive) for admin
+  async getAdminAll() {
+    const response = await fetch(`${API_BASE_URL}/public-services/admin`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json", ...getAuthHeader() },
+    });
+    return handleResponse(response);
+  },
+
+  // Create public service
+  async create(serviceData: Record<string, any>) {
+    const response = await fetch(`${API_BASE_URL}/public-services`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...getAuthHeader() },
+      body: JSON.stringify(serviceData),
+    });
+    return handleResponse(response);
+  },
+
+  // Update public service
+  async update(serviceId: string, serviceData: Record<string, any>) {
+    const response = await fetch(`${API_BASE_URL}/public-services/${serviceId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json", ...getAuthHeader() },
+      body: JSON.stringify(serviceData),
+    });
+    return handleResponse(response);
+  },
+
+  // Delete public service
+  async delete(serviceId: string) {
+    const response = await fetch(`${API_BASE_URL}/public-services/${serviceId}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json", ...getAuthHeader() },
+    });
+    return handleResponse(response);
+  },
+};
+
+// ============= CONTACT ENDPOINTS =============
+export const contactAPI = {
+  // Submit contact inquiry
+  async submitInquiry(data: { name: string; email: string; phone?: string; message: string }) {
+    const response = await fetch(`${API_BASE_URL}/contact`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
     });
     return handleResponse(response);
   },

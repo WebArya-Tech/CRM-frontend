@@ -14,7 +14,6 @@ export default function StudentLogin() {
   const { login } = useAuth();
   const [formData, setFormData] = useState({ 
     email: '', 
-    phone: '',
     password: '' 
   });
   const [loading, setLoading] = useState(false);
@@ -27,18 +26,12 @@ export default function StudentLogin() {
     setError('');
 
     try {
-      // Use email if provided, otherwise use phone
-      const loginIdentifier = formData.email || formData.phone;
-      if (!loginIdentifier) {
-        throw new Error('Please provide email or phone number');
+      if (!formData.email) {
+        throw new Error('Please provide your email address');
       }
 
       // Use AuthContext login to populate user state properly
-      if (formData.email) {
-        await login(formData.email, formData.password);
-      } else {
-        await login(undefined, formData.password, formData.phone);
-      }
+      await login(formData.email, formData.password);
       
       navigate('/student');
     } catch (err) {
@@ -77,25 +70,14 @@ export default function StudentLogin() {
               )}
 
               <div>
-                <label className="text-sm font-medium">Email Address or Phone Number</label>
-                <div className="space-y-2">
-                  <Input
-                    type="email"
-                    placeholder="student@example.com"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value, phone: '' })}
-                    disabled={loading}
-                  />
-                  <div className="text-center text-xs text-gray-500">OR</div>
-                  <Input
-                    type="tel"
-                    placeholder="(123) 456-7890"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value, email: '' })}
-                    disabled={loading}
-                  />
-                </div>
-                <p className="text-xs text-gray-500 mt-2">Enter either your email address or phone number</p>
+                <label className="text-sm font-medium">Email Address</label>
+                <Input
+                  type="email"
+                  placeholder="student@example.com"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  disabled={loading}
+                />
               </div>
 
               <div>
@@ -108,7 +90,7 @@ export default function StudentLogin() {
                 <div className="relative">
                   <Input
                     type={showPassword ? 'text' : 'password'}
-                    placeholder="e.g., STD-789456"
+                    placeholder="Default your 10 digit mobile"
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                     disabled={loading}
@@ -130,12 +112,13 @@ export default function StudentLogin() {
             </form>
 
             <div className="mt-6 space-y-3 text-center text-sm">
-              <div className="bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg p-3">
-                <p className="font-semibold text-green-900 dark:text-green-100 mb-2">Internal CRM Access</p>
-                <p className="text-green-800 dark:text-green-200 text-xs">
-                  Students are added by the Admin. If you haven't received your credentials, please contact the administrator.
-                </p>
-              </div>
+              <p className="text-muted-foreground">
+                Don't have an account?{' '}
+                <Link to="/student-register" className="text-blue-600 hover:underline font-medium">
+                  Register here
+                </Link>
+              </p>
+
 
               <div className="flex justify-between gap-2">
                 <Link to="/admin-login" className="flex-1">

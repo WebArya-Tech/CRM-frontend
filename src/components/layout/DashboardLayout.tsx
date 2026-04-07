@@ -4,7 +4,7 @@ import { useAuth } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
 import {
   GraduationCap, LayoutDashboard, Users, BookOpen, Calendar, FileText,
-  ChevronLeft, LogOut, Menu, UserCircle, DollarSign, Bell, Moon, Sun, CheckCircle
+  ChevronLeft, LogOut, Menu, UserCircle, DollarSign, Bell, Moon, Sun, CheckCircle, KeyRound
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "../ThemeToggle";
@@ -25,19 +25,23 @@ const adminNav: NavItem[] = [
   { label: "Classes", href: "/admin/classes", icon: Calendar },
   { label: "Billing Center", href: "/admin/billing", icon: DollarSign },
   { label: "Logs", href: "/admin/logs", icon: FileText },
+  { label: "Public Website", href: "/admin/public-services", icon: CheckCircle },
+  { label: "Reset Password", href: "/admin/reset-password", icon: KeyRound },
 ];
 
 const teacherNav: NavItem[] = [
   { label: "Dashboard", href: "/teacher", icon: LayoutDashboard },
   { label: "My Students", href: "/teacher/students", icon: Users },
-  { label: "Class History", href: "/teacher/history", icon: Calendar },
+  { label: "Class Details", href: "/teacher/history", icon: Calendar },
   { label: "Earnings", href: "/teacher/earnings", icon: DollarSign },
+  { label: "Reset Password", href: "/teacher/reset-password", icon: KeyRound },
 ];
 
 const studentNav: NavItem[] = [
   { label: "Dashboard", href: "/student", icon: LayoutDashboard },
   { label: "My Schedule", href: "/student/schedule", icon: Calendar },
-  { label: "Class History", href: "/student/history", icon: FileText },
+  { label: "Class Details", href: "/student/history", icon: FileText },
+  { label: "Reset Password", href: "/student/reset-password", icon: KeyRound },
 ];
 
 const roleConfig = {

@@ -17,9 +17,11 @@ import Login from "./pages/Login";
 import AdminLogin from "./pages/AdminLogin";
 import TeacherLogin from "./pages/TeacherLogin";
 import StudentLogin from "./pages/StudentLogin";
+import StudentRegister from "./pages/StudentRegister";
 
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import ResetPasswordInPanel from "./pages/ResetPasswordInPanel";
 import Payment from "./pages/Payment";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminApprovals from "./pages/admin/AdminApprovals";
@@ -29,6 +31,7 @@ import CoursesManagement from "./pages/admin/CoursesManagement";
 import ClassesManagement from "./pages/admin/ClassesManagement";
 import LogsViewer from "./pages/admin/LogsViewer";
 import BillingCenter from "./pages/admin/BillingCenter";
+import PublicServicesManagement from "./pages/admin/ServicesManagement";
 import StudentDashboard from "./pages/student/StudentDashboard";
 import { TeacherDashboard, MyStudents, ClassHistory, Earnings, TeacherHome } from "./pages/teacher";
 import Unauthorized from "./pages/Unauthorized";
@@ -56,6 +59,7 @@ const App = () => (
               <Route path="/admin-login" element={<AdminLogin />} />
               <Route path="/teacher-login" element={<TeacherLogin />} />
               <Route path="/student-login" element={<StudentLogin />} />
+              <Route path="/student-register" element={<StudentRegister />} />
               <Route path="/auth-login" element={<Login />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
@@ -82,6 +86,8 @@ const App = () => (
                 <Route path="classes" element={<ClassesManagement />} />
                 <Route path="billing" element={<BillingCenter />} />
                 <Route path="logs" element={<LogsViewer />} />
+                <Route path="public-services" element={<PublicServicesManagement />} />
+                <Route path="reset-password" element={<ResetPasswordInPanel />} />
               </Route>
 
               {/* Teacher */}
@@ -94,6 +100,7 @@ const App = () => (
                 <Route path="students" element={<MyStudents />} />
                 <Route path="history" element={<ClassHistory />} />
                 <Route path="earnings" element={<Earnings />} />
+                <Route path="reset-password" element={<ResetPasswordInPanel />} />
               </Route>
 
               {/* Student */}
@@ -105,6 +112,7 @@ const App = () => (
                 <Route index element={<StudentDashboard />} />
                 <Route path="schedule" element={<StudentDashboard />} />
                 <Route path="history" element={<StudentDashboard />} />
+                <Route path="reset-password" element={<ResetPasswordInPanel />} />
               </Route>
 
               <Route path="*" element={<NotFound />} />

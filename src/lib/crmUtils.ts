@@ -368,21 +368,19 @@ export function validateStudent(student: Partial<Student>): {
   const errors: string[] = [];
 
   if (!student.name?.trim()) errors.push("Name is required");
+  if (!student.email?.trim()) errors.push("Email is required");
+  if (!validateEmail(student.email || "")) errors.push("Invalid email format");
   if (!student.mobile?.trim()) errors.push("Mobile number is required");
   if (!validateMobile(student.mobile || "")) errors.push("Invalid mobile format (must be 10 digits)");
-  
-  if (!student.parentEmailId?.trim()) errors.push("Parent email is required");
-  if (!validateEmail(student.parentEmailId || "")) errors.push("Invalid parent email format");
-  
-  if (!student.fatherName?.trim()) errors.push("Father's name is required");
-  if (!student.motherName?.trim()) errors.push("Mother's name is required");
-  
-  if (!student.parentContact?.trim()) errors.push("Parent contact is required");
-  if (!validateMobile(student.parentContact || "")) errors.push("Invalid parent contact format (must be 10 digits)");
-  
   if (!student.grade) errors.push("Grade is required");
-  if (!student.dateOfEnrollment) errors.push("Date of enrollment is required");
-  if (!student.preferredTeacherId) errors.push("Preferred teacher assignment is required");
+
+  // Optional field validations (only validate format if provided)
+  if (student.parentEmailId?.trim() && !validateEmail(student.parentEmailId)) {
+    errors.push("Invalid parent email format");
+  }
+  if (student.parentContact?.trim() && !validateMobile(student.parentContact)) {
+    errors.push("Invalid parent contact format (must be 10 digits)");
+  }
 
   return { valid: errors.length === 0, errors };
 }
@@ -393,9 +391,11 @@ export function validateCourse(course: Partial<Course>): {
 } {
   const errors: string[] = [];
 
+  if (!course.courseName?.trim()) errors.push("Course name is required");
+  if (!course.classType) errors.push("Class type is required");
   if (!course.studentId) errors.push("Student is required");
   if (!course.teacherId) errors.push("Teacher is required");
-  if (!course.subject?.trim()) errors.push("Subject is required");
+  if (!course.paymentType) errors.push("Payment type is required");
   if (!course.cycleType) errors.push("Cycle type is required");
   if (!course.billingRatePerHour || course.billingRatePerHour < 0) errors.push("Billing rate must be positive");
   if (!course.startDate) errors.push("Start date is required");

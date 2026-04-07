@@ -103,13 +103,7 @@ export default function AdminLogin() {
             </form>
 
             <div className="mt-6 space-y-3 text-center text-sm">
-              <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
-                <p className="font-semibold text-blue-900 dark:text-blue-100 mb-2">Admin:</p>
-                <p className="text-blue-800 dark:text-blue-200 text-sm">
-                  Use <span className="font-mono">ADMIN_EMAIL</span> and <span className="font-mono">ADMIN_PASSWORD</span> from backend .env<br />
-                  (run <span className="font-mono">npm run seed:auth</span> in backend if not seeded)
-                </p>
-              </div>
+
 
               <div className="flex justify-between gap-2">
                 <Link to="/teacher-login" className="flex-1">

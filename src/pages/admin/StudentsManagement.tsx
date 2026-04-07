@@ -329,39 +329,6 @@ export default function StudentsManagement() {
                 />
               </div>
               <div>
-                <Label>Father's Name *</Label>
-                <Input
-                  value={formData.fatherName || ""}
-                  onChange={(e) => setFormData({ ...formData, fatherName: e.target.value })}
-                  placeholder="Father's full name"
-                />
-              </div>
-              <div>
-                <Label>Mother's Name *</Label>
-                <Input
-                  value={formData.motherName || ""}
-                  onChange={(e) => setFormData({ ...formData, motherName: e.target.value })}
-                  placeholder="Mother's full name"
-                />
-              </div>
-              <div>
-                <Label>Parent Email *</Label>
-                <Input
-                  type="email"
-                  value={formData.parentEmailId || ""}
-                  onChange={(e) => setFormData({ ...formData, parentEmailId: e.target.value })}
-                  placeholder="parent@example.com"
-                />
-              </div>
-              <div>
-                <Label>Parent Contact * (10 digits)</Label>
-                <Input
-                  value={formData.parentContact || ""}
-                  onChange={(e) => setFormData({ ...formData, parentContact: e.target.value })}
-                  placeholder="9876543210"
-                />
-              </div>
-              <div>
                 <Label>Grade *</Label>
                 <Select
                   value={formData.grade || ""}
@@ -380,7 +347,7 @@ export default function StudentsManagement() {
                 </Select>
               </div>
               <div>
-                <Label>Date of Enrollment *</Label>
+                <Label>Date of Enrollment</Label>
                 <Input
                   type="date"
                   value={formData.dateOfEnrollment || ""}
@@ -390,22 +357,47 @@ export default function StudentsManagement() {
                 />
               </div>
               <div>
-                <Label>Course Name</Label>
+                <Label>Father's Name</Label>
                 <Input
-                  value={formData.courseName || ""}
-                  onChange={(e) => setFormData({ ...formData, courseName: e.target.value })}
-                  placeholder="e.g., Mathematics, Science, etc."
+                  value={formData.fatherName || ""}
+                  onChange={(e) => setFormData({ ...formData, fatherName: e.target.value })}
+                  placeholder="Father's full name (optional)"
                 />
               </div>
               <div>
-                <Label>Assign Teacher *</Label>
+                <Label>Mother's Name</Label>
+                <Input
+                  value={formData.motherName || ""}
+                  onChange={(e) => setFormData({ ...formData, motherName: e.target.value })}
+                  placeholder="Mother's full name (optional)"
+                />
+              </div>
+              <div>
+                <Label>Parent Email</Label>
+                <Input
+                  type="email"
+                  value={formData.parentEmailId || ""}
+                  onChange={(e) => setFormData({ ...formData, parentEmailId: e.target.value })}
+                  placeholder="parent@example.com (optional)"
+                />
+              </div>
+              <div>
+                <Label>Parent Contact (10 digits)</Label>
+                <Input
+                  value={formData.parentContact || ""}
+                  onChange={(e) => setFormData({ ...formData, parentContact: e.target.value })}
+                  placeholder="9876543210 (optional)"
+                />
+              </div>
+              <div>
+                <Label>Assign Teacher</Label>
                 <Select
                   value={formData.preferredTeacherId || ""}
                   onValueChange={(value) => setFormData({ ...formData, preferredTeacherId: value })}
                   disabled={loadingTeachers}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder={loadingTeachers ? "Loading..." : "Select teacher"} />
+                    <SelectValue placeholder={loadingTeachers ? "Loading..." : "Select teacher (optional)"} />
                   </SelectTrigger>
                   <SelectContent>
                     {teachers.map((t) => (
@@ -416,12 +408,20 @@ export default function StudentsManagement() {
                   </SelectContent>
                 </Select>
               </div>
+              <div>
+                <Label>Course Name</Label>
+                <Input
+                  value={formData.courseName || ""}
+                  onChange={(e) => setFormData({ ...formData, courseName: e.target.value })}
+                  placeholder="e.g., Mathematics (optional)"
+                />
+              </div>
               <div className="col-span-2">
                 <Label>Address</Label>
                 <Input
                   value={formData.address || ""}
                   onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                  placeholder="Full address"
+                  placeholder="Full address (optional)"
                 />
               </div>
             </div>

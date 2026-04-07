@@ -1,7 +1,7 @@
 // ============= API SERVICE =============
 // Handles all API calls to the backend
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8099/api";
+const VITE_API_URL = import.meta.env.VITE_API_URL || "http://localhost:8099/api";
 
 // ============= AUTHENTICATION HELPERS =============
 const getAuthToken = () => localStorage.getItem('authToken');
@@ -44,7 +44,7 @@ async function handleResponse(response: Response) {
 export const authAPI = {
   // Register user
   async register(formData: { name: string; email: string; password: string; confirmPassword: string; role?: string }) {
-    const response = await fetch(`${API_BASE_URL}/auth/register`, {
+    const response = await fetch(`${VITE_API_URL}/auth/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
@@ -62,7 +62,7 @@ export const authAPI = {
     if (email) loginData.email = email;
     if (phone) loginData.phone = phone;
 
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+    const response = await fetch(`${VITE_API_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(loginData),
@@ -76,7 +76,7 @@ export const authAPI = {
 
   // Get current user
   async getMe() {
-    const response = await fetch(`${API_BASE_URL}/auth/me`, {
+    const response = await fetch(`${VITE_API_URL}/auth/me`, {
       method: "GET",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
     });
@@ -85,7 +85,7 @@ export const authAPI = {
 
   // Update profile
   async updateProfile(updateData: UpdateData) {
-    const response = await fetch(`${API_BASE_URL}/auth/update-profile`, {
+    const response = await fetch(`${VITE_API_URL}/auth/update-profile`, {
       method: "PUT",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
       body: JSON.stringify(updateData),
@@ -95,7 +95,7 @@ export const authAPI = {
 
   // Change password
   async changePassword(passwords: { currentPassword: string; newPassword: string; confirmPassword: string }) {
-    const response = await fetch(`${API_BASE_URL}/auth/change-password`, {
+    const response = await fetch(`${VITE_API_URL}/auth/change-password`, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
       body: JSON.stringify(passwords),
@@ -105,7 +105,7 @@ export const authAPI = {
 
   // Forgot password
   async forgotPassword(email: string) {
-    const response = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
+    const response = await fetch(`${VITE_API_URL}/auth/forgot-password`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
@@ -115,7 +115,7 @@ export const authAPI = {
 
   // Reset password with OTP
   async resetPassword(data: { email: string; otp: string; newPassword: string; confirmPassword: string }) {
-    const response = await fetch(`${API_BASE_URL}/auth/reset-password`, {
+    const response = await fetch(`${VITE_API_URL}/auth/reset-password`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -129,7 +129,7 @@ export const authAPI = {
       const token = getAuthToken();
       if (token) {
         // Call backend logout endpoint
-        const response = await fetch(`${API_BASE_URL}/auth/logout`, {
+        const response = await fetch(`${VITE_API_URL}/auth/logout`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -149,7 +149,7 @@ export const authAPI = {
 
   // Get pending user approvals (Admin only)
   async getPendingApprovals() {
-    const response = await fetch(`${API_BASE_URL}/auth/admin/pending-approvals`, {
+    const response = await fetch(`${VITE_API_URL}/auth/admin/pending-approvals`, {
       method: "GET",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
     });
@@ -158,7 +158,7 @@ export const authAPI = {
 
   // Approve a user (Admin only)
   async approveUser(userId: string) {
-    const response = await fetch(`${API_BASE_URL}/auth/admin/approve/${userId}`, {
+    const response = await fetch(`${VITE_API_URL}/auth/admin/approve/${userId}`, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
     });
@@ -167,7 +167,7 @@ export const authAPI = {
 
   // Reject a user (Admin only)
   async rejectUser(userId: string) {
-    const response = await fetch(`${API_BASE_URL}/auth/admin/reject/${userId}`, {
+    const response = await fetch(`${VITE_API_URL}/auth/admin/reject/${userId}`, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
     });
@@ -184,7 +184,7 @@ export const authAPI = {
 export const paymentAPI = {
   // Create payment intent
   async createPaymentIntent(courseId?: string, amount?: number, description?: string) {
-    const response = await fetch(`${API_BASE_URL}/payments/create-intent`, {
+    const response = await fetch(`${VITE_API_URL}/payments/create-intent`, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
       body: JSON.stringify({ courseId, amount, description }),
@@ -194,7 +194,7 @@ export const paymentAPI = {
 
   // Process payment
   async processPayment(paymentData: { courseId?: string; amount: number; paymentIntentId?: string; paymentMethod?: string; description: string; transactionId?: string }) {
-    const response = await fetch(`${API_BASE_URL}/payments/process`, {
+    const response = await fetch(`${VITE_API_URL}/payments/process`, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
       body: JSON.stringify(paymentData),
@@ -208,7 +208,7 @@ export const paymentAPI = {
       page: page.toString(),
       limit: limit.toString(),
     });
-    const response = await fetch(`${API_BASE_URL}/payments/my-payments?${params}`, {
+    const response = await fetch(`${VITE_API_URL}/payments/my-payments?${params}`, {
       method: "GET",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
     });
@@ -217,7 +217,7 @@ export const paymentAPI = {
 
   // Get payment by ID
   async getPayment(paymentId: string) {
-    const response = await fetch(`${API_BASE_URL}/payments/${paymentId}`, {
+    const response = await fetch(`${VITE_API_URL}/payments/${paymentId}`, {
       method: "GET",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
     });
@@ -231,7 +231,7 @@ export const paymentAPI = {
       limit: limit.toString(),
       ...filters,
     });
-    const response = await fetch(`${API_BASE_URL}/payments?${params}`, {
+    const response = await fetch(`${VITE_API_URL}/payments?${params}`, {
       method: "GET",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
     });
@@ -240,7 +240,7 @@ export const paymentAPI = {
 
   // Refund payment (admin)
   async refundPayment(paymentId: string, reason?: string) {
-    const response = await fetch(`${API_BASE_URL}/payments/${paymentId}/refund`, {
+    const response = await fetch(`${VITE_API_URL}/payments/${paymentId}/refund`, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
       body: JSON.stringify({ reason }),
@@ -250,7 +250,7 @@ export const paymentAPI = {
 
   // Get payment stats (admin)
   async getPaymentStats() {
-    const response = await fetch(`${API_BASE_URL}/payments/stats`, {
+    const response = await fetch(`${VITE_API_URL}/payments/stats`, {
       method: "GET",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
     });
@@ -268,7 +268,7 @@ export const studentAPI = {
       limit: limit.toString(),
       ...filters,
     });
-    const response = await fetch(`${API_BASE_URL}/students?${params}`, {
+    const response = await fetch(`${VITE_API_URL}/students?${params}`, {
       method: "GET",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
     });
@@ -277,7 +277,7 @@ export const studentAPI = {
 
   // Get student by ID
   async getById(studentId: string) {
-    const response = await fetch(`${API_BASE_URL}/students/${studentId}`, {
+    const response = await fetch(`${VITE_API_URL}/students/${studentId}`, {
       method: "GET",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
     });
@@ -286,7 +286,7 @@ export const studentAPI = {
 
   // Create student
   async create(studentData: Record<string, any>) {
-    const response = await fetch(`${API_BASE_URL}/students`, {
+    const response = await fetch(`${VITE_API_URL}/students`, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
       body: JSON.stringify(studentData),
@@ -296,7 +296,7 @@ export const studentAPI = {
 
   // Update student
   async update(studentId: string, updateData: Record<string, any>) {
-    const response = await fetch(`${API_BASE_URL}/students/${studentId}`, {
+    const response = await fetch(`${VITE_API_URL}/students/${studentId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
       body: JSON.stringify(updateData),
@@ -306,7 +306,7 @@ export const studentAPI = {
 
   // Delete student
   async delete(studentId: string, deleteData: Record<string, any>) {
-    const response = await fetch(`${API_BASE_URL}/students/${studentId}`, {
+    const response = await fetch(`${VITE_API_URL}/students/${studentId}`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
       body: JSON.stringify(deleteData),
@@ -316,7 +316,7 @@ export const studentAPI = {
 
   // Get student statistics
   async getStats() {
-    const response = await fetch(`${API_BASE_URL}/students/stats/overview`, {
+    const response = await fetch(`${VITE_API_URL}/students/stats/overview`, {
       method: "GET",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
     });
@@ -325,7 +325,7 @@ export const studentAPI = {
 
   // Get students for teacher
   async getStudentsForTeacher() {
-    const response = await fetch(`${API_BASE_URL}/students/teacher`, { headers: getAuthHeader() });
+    const response = await fetch(`${VITE_API_URL}/students/teacher`, { headers: getAuthHeader() });
     return handleResponse(response);
   },
 };
@@ -334,7 +334,7 @@ export const studentAPI = {
 export const teacherAPI = {
   // Get my teacher profile (logged-in teacher)
   async getMyProfile() {
-    const response = await fetch(`${API_BASE_URL}/teachers/me/profile`, {
+    const response = await fetch(`${VITE_API_URL}/teachers/me/profile`, {
       method: "GET",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
     });
@@ -348,7 +348,7 @@ export const teacherAPI = {
       limit: limit.toString(),
       ...filters,
     });
-    const response = await fetch(`${API_BASE_URL}/teachers?${params}`, {
+    const response = await fetch(`${VITE_API_URL}/teachers?${params}`, {
       method: "GET",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
     });
@@ -357,7 +357,7 @@ export const teacherAPI = {
 
   // Get teacher by ID
   async getById(teacherId: string) {
-    const response = await fetch(`${API_BASE_URL}/teachers/${teacherId}`, {
+    const response = await fetch(`${VITE_API_URL}/teachers/${teacherId}`, {
       method: "GET",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
     });
@@ -366,7 +366,7 @@ export const teacherAPI = {
 
   // Create teacher
   async create(teacherData: Record<string, any>) {
-    const response = await fetch(`${API_BASE_URL}/teachers`, {
+    const response = await fetch(`${VITE_API_URL}/teachers`, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
       body: JSON.stringify(teacherData),
@@ -376,7 +376,7 @@ export const teacherAPI = {
 
   // Update teacher
   async update(teacherId: string, updateData: Record<string, any>) {
-    const response = await fetch(`${API_BASE_URL}/teachers/${teacherId}`, {
+    const response = await fetch(`${VITE_API_URL}/teachers/${teacherId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
       body: JSON.stringify(updateData),
@@ -386,7 +386,7 @@ export const teacherAPI = {
 
   // Delete teacher
   async delete(teacherId: string, deleteData: Record<string, any>) {
-    const response = await fetch(`${API_BASE_URL}/teachers/${teacherId}`, {
+    const response = await fetch(`${VITE_API_URL}/teachers/${teacherId}`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
       body: JSON.stringify(deleteData),
@@ -396,7 +396,7 @@ export const teacherAPI = {
 
   // Get teacher statistics
   async getStats() {
-    const response = await fetch(`${API_BASE_URL}/teachers/stats/overview`, {
+    const response = await fetch(`${VITE_API_URL}/teachers/stats/overview`, {
       method: "GET",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
     });
@@ -413,7 +413,7 @@ export const courseAPI = {
       limit: limit.toString(),
       ...filters,
     });
-    const response = await fetch(`${API_BASE_URL}/courses?${params}`, {
+    const response = await fetch(`${VITE_API_URL}/courses?${params}`, {
       method: "GET",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
     });
@@ -422,7 +422,7 @@ export const courseAPI = {
 
   // Get course by ID
   async getById(courseId: string) {
-    const response = await fetch(`${API_BASE_URL}/courses/${courseId}`, {
+    const response = await fetch(`${VITE_API_URL}/courses/${courseId}`, {
       method: "GET",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
     });
@@ -431,7 +431,7 @@ export const courseAPI = {
 
   // Create course
   async create(courseData: Record<string, any>) {
-    const response = await fetch(`${API_BASE_URL}/courses`, {
+    const response = await fetch(`${VITE_API_URL}/courses`, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
       body: JSON.stringify(courseData),
@@ -441,7 +441,7 @@ export const courseAPI = {
 
   // Create batch courses (group classes — one course per student)
   async createBatch(batchData: Record<string, any>) {
-    const response = await fetch(`${API_BASE_URL}/courses/batch`, {
+    const response = await fetch(`${VITE_API_URL}/courses/batch`, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
       body: JSON.stringify(batchData),
@@ -451,7 +451,7 @@ export const courseAPI = {
 
   // Update course
   async update(courseId: string, updateData: Record<string, any>) {
-    const response = await fetch(`${API_BASE_URL}/courses/${courseId}`, {
+    const response = await fetch(`${VITE_API_URL}/courses/${courseId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
       body: JSON.stringify(updateData),
@@ -461,7 +461,7 @@ export const courseAPI = {
 
   // Update fee status
   async updateFeeStatus(courseId: string, feeStatus: string) {
-    const response = await fetch(`${API_BASE_URL}/courses/${courseId}/fee-status`, {
+    const response = await fetch(`${VITE_API_URL}/courses/${courseId}/fee-status`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
       body: JSON.stringify({ feeStatus }),
@@ -471,7 +471,7 @@ export const courseAPI = {
 
   // Delete course
   async delete(courseId: string, deleteData: Record<string, any>) {
-    const response = await fetch(`${API_BASE_URL}/courses/${courseId}`, {
+    const response = await fetch(`${VITE_API_URL}/courses/${courseId}`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
       body: JSON.stringify(deleteData),
@@ -481,7 +481,7 @@ export const courseAPI = {
 
   // Get course statistics
   async getStats() {
-    const response = await fetch(`${API_BASE_URL}/courses/stats/overview`, {
+    const response = await fetch(`${VITE_API_URL}/courses/stats/overview`, {
       method: "GET",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
     });
@@ -490,13 +490,13 @@ export const courseAPI = {
 
   // Get courses for teacher
   async getCoursesForTeacher() {
-    const response = await fetch(`${API_BASE_URL}/courses/teacher`, { headers: getAuthHeader() });
+    const response = await fetch(`${VITE_API_URL}/courses/teacher`, { headers: getAuthHeader() });
     return handleResponse(response);
   },
 
   // Get courses for student
   async getCoursesForStudent() {
-    const response = await fetch(`${API_BASE_URL}/courses/student`, { headers: getAuthHeader() });
+    const response = await fetch(`${VITE_API_URL}/courses/student`, { headers: getAuthHeader() });
     return handleResponse(response);
   },
 };
@@ -510,7 +510,7 @@ export const classAPI = {
       limit: limit.toString(),
       ...filters,
     });
-    const response = await fetch(`${API_BASE_URL}/classes?${params}`, {
+    const response = await fetch(`${VITE_API_URL}/classes?${params}`, {
       method: "GET",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
     });
@@ -519,7 +519,7 @@ export const classAPI = {
 
   // Get class by ID
   async getById(classId: string) {
-    const response = await fetch(`${API_BASE_URL}/classes/${classId}`, {
+    const response = await fetch(`${VITE_API_URL}/classes/${classId}`, {
       method: "GET",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
     });
@@ -528,7 +528,7 @@ export const classAPI = {
 
   // Create class
   async create(classData: Record<string, any>) {
-    const response = await fetch(`${API_BASE_URL}/classes`, {
+    const response = await fetch(`${VITE_API_URL}/classes`, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
       body: JSON.stringify(classData),
@@ -538,7 +538,7 @@ export const classAPI = {
 
   // Update class
   async update(classId: string, updateData: Record<string, any>) {
-    const response = await fetch(`${API_BASE_URL}/classes/${classId}`, {
+    const response = await fetch(`${VITE_API_URL}/classes/${classId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
       body: JSON.stringify(updateData),
@@ -548,7 +548,7 @@ export const classAPI = {
 
   // Mark class as completed
   async complete(classId: string) {
-    const response = await fetch(`${API_BASE_URL}/classes/${classId}/complete`, {
+    const response = await fetch(`${VITE_API_URL}/classes/${classId}/complete`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
       body: JSON.stringify({}),
@@ -558,7 +558,7 @@ export const classAPI = {
 
   // Cancel class
   async cancel(classId: string, reason: string) {
-    const response = await fetch(`${API_BASE_URL}/classes/${classId}/cancel`, {
+    const response = await fetch(`${VITE_API_URL}/classes/${classId}/cancel`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
       body: JSON.stringify({ reason }),
@@ -568,7 +568,7 @@ export const classAPI = {
 
   // Update class status (supports 1-minute teacher edit window)
   async updateStatus(classId: string, status: string, reason?: string) {
-    const response = await fetch(`${API_BASE_URL}/classes/${classId}/status`, {
+    const response = await fetch(`${VITE_API_URL}/classes/${classId}/status`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
       body: JSON.stringify({ status, reason }),
@@ -578,7 +578,7 @@ export const classAPI = {
 
   // Delete class
   async delete(classId: string, deleteData: Record<string, any>) {
-    const response = await fetch(`${API_BASE_URL}/classes/${classId}`, {
+    const response = await fetch(`${VITE_API_URL}/classes/${classId}`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
       body: JSON.stringify(deleteData),
@@ -588,7 +588,7 @@ export const classAPI = {
 
   // Get class statistics
   async getStats() {
-    const response = await fetch(`${API_BASE_URL}/classes/stats/overview`, {
+    const response = await fetch(`${VITE_API_URL}/classes/stats/overview`, {
       method: "GET",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
     });
@@ -597,13 +597,13 @@ export const classAPI = {
 
   // Get classes for teacher
   async getClassesForTeacher() {
-    const response = await fetch(`${API_BASE_URL}/classes/teacher`, { headers: getAuthHeader() });
+    const response = await fetch(`${VITE_API_URL}/classes/teacher`, { headers: getAuthHeader() });
     return handleResponse(response);
   },
 
   // Get classes for student
   async getClassesForStudent() {
-    const response = await fetch(`${API_BASE_URL}/classes/student`, { headers: getAuthHeader() });
+    const response = await fetch(`${VITE_API_URL}/classes/student`, { headers: getAuthHeader() });
     return handleResponse(response);
   },
 };
@@ -617,19 +617,19 @@ export const notificationAPI = {
       limit: limit.toString(),
       ...filters,
     });
-    const response = await fetch(`${API_BASE_URL}/notifications?${params}`);
+    const response = await fetch(`${VITE_API_URL}/notifications?${params}`);
     return handleResponse(response);
   },
 
   // Get notification by ID
   async getById(notificationId: string) {
-    const response = await fetch(`${API_BASE_URL}/notifications/${notificationId}`);
+    const response = await fetch(`${VITE_API_URL}/notifications/${notificationId}`);
     return handleResponse(response);
   },
 
   // Create notification
   async create(notificationData: Record<string, any>) {
-    const response = await fetch(`${API_BASE_URL}/notifications`, {
+    const response = await fetch(`${VITE_API_URL}/notifications`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(notificationData),
@@ -640,7 +640,7 @@ export const notificationAPI = {
   // Update notification status
   async updateStatus(notificationId: string, status: string) {
     const response = await fetch(
-      `${API_BASE_URL}/notifications/${notificationId}/status`,
+      `${VITE_API_URL}/notifications/${notificationId}/status`,
       {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -652,7 +652,7 @@ export const notificationAPI = {
 
   // Mark multiple as read
   async markMultipleAsRead(notificationIds: string[]) {
-    const response = await fetch(`${API_BASE_URL}/notifications/bulk/read`, {
+    const response = await fetch(`${VITE_API_URL}/notifications/bulk/read`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ notificationIds }),
@@ -663,14 +663,14 @@ export const notificationAPI = {
   // Get unread count
   async getUnreadCount(recipientId: string) {
     const response = await fetch(
-      `${API_BASE_URL}/notifications/count/unread?recipientId=${recipientId}`
+      `${VITE_API_URL}/notifications/count/unread?recipientId=${recipientId}`
     );
     return handleResponse(response);
   },
 
   // Delete notification
   async delete(notificationId: string) {
-    const response = await fetch(`${API_BASE_URL}/notifications/${notificationId}`, {
+    const response = await fetch(`${VITE_API_URL}/notifications/${notificationId}`, {
       method: "DELETE",
     });
     return handleResponse(response);
@@ -678,7 +678,7 @@ export const notificationAPI = {
 
   // Clear old notifications
   async clearOld(daysOld: number) {
-    const response = await fetch(`${API_BASE_URL}/notifications/bulk/old`, {
+    const response = await fetch(`${VITE_API_URL}/notifications/bulk/old`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ daysOld }),
@@ -696,7 +696,7 @@ export const logAPI = {
       limit: limit.toString(),
       ...filters,
     });
-    const response = await fetch(`${API_BASE_URL}/logs?${params}`, {
+    const response = await fetch(`${VITE_API_URL}/logs?${params}`, {
       method: "GET",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
     });
@@ -705,7 +705,7 @@ export const logAPI = {
 
   // Get log by ID
   async getById(logId: string) {
-    const response = await fetch(`${API_BASE_URL}/logs/${logId}`, {
+    const response = await fetch(`${VITE_API_URL}/logs/${logId}`, {
       method: "GET",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
     });
@@ -718,7 +718,7 @@ export const logAPI = {
       objectId,
       objectType,
     });
-    const response = await fetch(`${API_BASE_URL}/logs/audit/trail?${params}`, {
+    const response = await fetch(`${VITE_API_URL}/logs/audit/trail?${params}`, {
       method: "GET",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
     });
@@ -731,7 +731,7 @@ export const logAPI = {
       page: page.toString(),
       limit: limit.toString(),
     });
-    const response = await fetch(`${API_BASE_URL}/logs/actor/${actorId}?${params}`, {
+    const response = await fetch(`${VITE_API_URL}/logs/actor/${actorId}?${params}`, {
       method: "GET",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
     });
@@ -744,7 +744,7 @@ export const logAPI = {
       page: page.toString(),
       limit: limit.toString(),
     });
-    const response = await fetch(`${API_BASE_URL}/logs/object/${objectId}?${params}`, {
+    const response = await fetch(`${VITE_API_URL}/logs/object/${objectId}?${params}`, {
       method: "GET",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
     });
@@ -753,7 +753,7 @@ export const logAPI = {
 
   // Get log statistics
   async getStats() {
-    const response = await fetch(`${API_BASE_URL}/logs/stats/overview`, {
+    const response = await fetch(`${VITE_API_URL}/logs/stats/overview`, {
       method: "GET",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
     });
@@ -763,7 +763,7 @@ export const logAPI = {
   // Export logs
   async export(filters?: Record<string, any>) {
     const params = new URLSearchParams(filters || {});
-    const response = await fetch(`${API_BASE_URL}/logs/export/json?${params}`, {
+    const response = await fetch(`${VITE_API_URL}/logs/export/json?${params}`, {
       method: "GET",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
     });
@@ -772,7 +772,7 @@ export const logAPI = {
 
   // Delete old logs
   async deleteOld(daysOld: number) {
-    const response = await fetch(`${API_BASE_URL}/logs/cleanup`, {
+    const response = await fetch(`${VITE_API_URL}/logs/cleanup`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
       body: JSON.stringify({ daysOld }),
@@ -785,7 +785,7 @@ export const logAPI = {
 export const classSessionAPI = {
   // Create a new class
   async createClass(classData: any) {
-    const response = await fetch(`${API_BASE_URL}/class-sessions`, {
+    const response = await fetch(`${VITE_API_URL}/class-sessions`, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
       body: JSON.stringify(classData),
@@ -795,7 +795,7 @@ export const classSessionAPI = {
 
   // Get my classes
   async getMyClasses() {
-    const response = await fetch(`${API_BASE_URL}/class-sessions`, {
+    const response = await fetch(`${VITE_API_URL}/class-sessions`, {
       method: "GET",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
     });
@@ -804,7 +804,7 @@ export const classSessionAPI = {
 
   // Get single class details
   async getClass(classId: string) {
-    const response = await fetch(`${API_BASE_URL}/class-sessions/${classId}`, {
+    const response = await fetch(`${VITE_API_URL}/class-sessions/${classId}`, {
       method: "GET",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
     });
@@ -813,7 +813,7 @@ export const classSessionAPI = {
 
   // Enroll student in class
   async enrollClass(classId: string) {
-    const response = await fetch(`${API_BASE_URL}/class-sessions/${classId}/enroll`, {
+    const response = await fetch(`${VITE_API_URL}/class-sessions/${classId}/enroll`, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
     });
@@ -822,7 +822,7 @@ export const classSessionAPI = {
 
   // Record attendance
   async recordAttendance(classId: string, attendanceData: any[]) {
-    const response = await fetch(`${API_BASE_URL}/class-sessions/${classId}/attendance`, {
+    const response = await fetch(`${VITE_API_URL}/class-sessions/${classId}/attendance`, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
       body: JSON.stringify({ attendanceData }),
@@ -832,7 +832,7 @@ export const classSessionAPI = {
 
   // Mark class as completed
   async completeClass(classId: string) {
-    const response = await fetch(`${API_BASE_URL}/class-sessions/${classId}/complete`, {
+    const response = await fetch(`${VITE_API_URL}/class-sessions/${classId}/complete`, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
     });
@@ -841,7 +841,7 @@ export const classSessionAPI = {
 
   // Update hourly rate
   async updateHourlyRate(hourlyRate: number) {
-    const response = await fetch(`${API_BASE_URL}/class-sessions/teacher/hourly-rate`, {
+    const response = await fetch(`${VITE_API_URL}/class-sessions/teacher/hourly-rate`, {
       method: "PUT",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
       body: JSON.stringify({ hourlyRate }),
@@ -854,7 +854,7 @@ export const classSessionAPI = {
 export const payrollAPI = {
   // Generate monthly payroll
   async generateMonthlyPayroll(billingMonth: string) {
-    const response = await fetch(`${API_BASE_URL}/payroll/generate-monthly`, {
+    const response = await fetch(`${VITE_API_URL}/payroll/generate-monthly`, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
       body: JSON.stringify({ billingMonth }),
@@ -864,7 +864,7 @@ export const payrollAPI = {
 
   // Get pending payrolls
   async getPendingPayrolls() {
-    const response = await fetch(`${API_BASE_URL}/payroll/pending`, {
+    const response = await fetch(`${VITE_API_URL}/payroll/pending`, {
       method: "GET",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
     });
@@ -873,7 +873,7 @@ export const payrollAPI = {
 
   // Approve payroll
   async approvePayroll(payrollId: string, deductions: number = 0) {
-    const response = await fetch(`${API_BASE_URL}/payroll/${payrollId}/approve`, {
+    const response = await fetch(`${VITE_API_URL}/payroll/${payrollId}/approve`, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
       body: JSON.stringify({ deductions }),
@@ -883,7 +883,7 @@ export const payrollAPI = {
 
   // Mark payroll as paid
   async markPayrollAsPaid(payrollId: string, paymentData: any) {
-    const response = await fetch(`${API_BASE_URL}/payroll/${payrollId}/pay`, {
+    const response = await fetch(`${VITE_API_URL}/payroll/${payrollId}/pay`, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
       body: JSON.stringify(paymentData),
@@ -894,8 +894,8 @@ export const payrollAPI = {
   // Get teacher payroll history
   async getTeacherPayroll(teacherId?: string) {
     const url = teacherId 
-      ? `${API_BASE_URL}/payroll/teacher/${teacherId}`
-      : `${API_BASE_URL}/payroll/teacher`;
+      ? `${VITE_API_URL}/payroll/teacher/${teacherId}`
+      : `${VITE_API_URL}/payroll/teacher`;
     const response = await fetch(url, {
       method: "GET",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
@@ -908,7 +908,7 @@ export const payrollAPI = {
 export const invoiceAPI = {
   // Generate monthly invoices
   async generateMonthlyInvoices(billingMonth: string) {
-    const response = await fetch(`${API_BASE_URL}/invoices/generate-monthly`, {
+    const response = await fetch(`${VITE_API_URL}/invoices/generate-monthly`, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
       body: JSON.stringify({ billingMonth }),
@@ -918,7 +918,7 @@ export const invoiceAPI = {
 
   // Get my invoices
   async getMyInvoices() {
-    const response = await fetch(`${API_BASE_URL}/invoices/my-invoices`, {
+    const response = await fetch(`${VITE_API_URL}/invoices/my-invoices`, {
       method: "GET",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
     });
@@ -927,7 +927,7 @@ export const invoiceAPI = {
 
   // Get pending invoices (Admin)
   async getPendingInvoices() {
-    const response = await fetch(`${API_BASE_URL}/invoices/pending`, {
+    const response = await fetch(`${VITE_API_URL}/invoices/pending`, {
       method: "GET",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
     });
@@ -936,7 +936,7 @@ export const invoiceAPI = {
 
   // Get invoice details
   async getInvoice(invoiceId: string) {
-    const response = await fetch(`${API_BASE_URL}/invoices/${invoiceId}`, {
+    const response = await fetch(`${VITE_API_URL}/invoices/${invoiceId}`, {
       method: "GET",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
     });
@@ -945,7 +945,7 @@ export const invoiceAPI = {
 
   // Pay invoice
   async payInvoice(invoiceId: string, paymentData: any) {
-    const response = await fetch(`${API_BASE_URL}/invoices/${invoiceId}/pay`, {
+    const response = await fetch(`${VITE_API_URL}/invoices/${invoiceId}/pay`, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
       body: JSON.stringify(paymentData),
@@ -958,7 +958,7 @@ export const invoiceAPI = {
 export const publicServiceAPI = {
   // Get all active services for public site
   async getAll() {
-    const response = await fetch(`${API_BASE_URL}/public-services`, {
+    const response = await fetch(`${VITE_API_URL}/public-services`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     });
@@ -967,7 +967,7 @@ export const publicServiceAPI = {
 
   // Get all services (including inactive) for admin
   async getAdminAll() {
-    const response = await fetch(`${API_BASE_URL}/public-services/admin`, {
+    const response = await fetch(`${VITE_API_URL}/public-services/admin`, {
       method: "GET",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
     });
@@ -976,7 +976,7 @@ export const publicServiceAPI = {
 
   // Create public service
   async create(serviceData: Record<string, any>) {
-    const response = await fetch(`${API_BASE_URL}/public-services`, {
+    const response = await fetch(`${VITE_API_URL}/public-services`, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
       body: JSON.stringify(serviceData),
@@ -986,7 +986,7 @@ export const publicServiceAPI = {
 
   // Update public service
   async update(serviceId: string, serviceData: Record<string, any>) {
-    const response = await fetch(`${API_BASE_URL}/public-services/${serviceId}`, {
+    const response = await fetch(`${VITE_API_URL}/public-services/${serviceId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
       body: JSON.stringify(serviceData),
@@ -996,7 +996,7 @@ export const publicServiceAPI = {
 
   // Delete public service
   async delete(serviceId: string) {
-    const response = await fetch(`${API_BASE_URL}/public-services/${serviceId}`, {
+    const response = await fetch(`${VITE_API_URL}/public-services/${serviceId}`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json", ...getAuthHeader() },
     });
@@ -1008,7 +1008,7 @@ export const publicServiceAPI = {
 export const contactAPI = {
   // Submit contact inquiry
   async submitInquiry(data: { name: string; email: string; phone?: string; message: string }) {
-    const response = await fetch(`${API_BASE_URL}/contact`, {
+    const response = await fetch(`${VITE_API_URL}/contact`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),

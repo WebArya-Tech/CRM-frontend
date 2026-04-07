@@ -8,15 +8,15 @@ services:
     container_name: crm-frontend
     ports:
       - "9089:9089"
+    env_file:
+      - .env
     environment:
-      - NODE_ENV=${NODE_ENV:-production}
+      - NODE_ENV=${NODE_ENV}
       - VITE_API_URL=${VITE_API_URL}
       - VITE_APP_NAME=${VITE_APP_NAME}
     restart: unless-stopped
     networks:
       - crm-network
-    env_file:
-      - .env
 
 networks:
   crm-network:

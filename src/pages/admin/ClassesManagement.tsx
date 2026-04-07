@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
-import { Plus, Edit, Trash2, Loader } from "lucide-react";
+import { Plus, Edit, Trash2, Loader, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -39,6 +39,7 @@ export default function ClassesManagement() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<Class>>({});
   const [errors, setErrors] = useState<string[]>([]);
+  const [updatingStatus, setUpdatingStatus] = useState<string | null>(null);
 
   const adminId = user?._id || "system";
 
@@ -64,7 +65,7 @@ export default function ClassesManagement() {
     try {
       setLoadingRefs(true);
       const [courseRes, studentRes, teacherRes] = await Promise.all([
-        courseAPI.getAll(1, 200, { status: "Active" }),
+        courseAPI.getAll(1, 200),
         studentAPI.getAll(1, 200, { status: "Active" }),
         teacherAPI.getAll(1, 100, { status: "Active" }),
       ]);
@@ -86,7 +87,7 @@ export default function ClassesManagement() {
       
       const searchLower = searchTerm.toLowerCase();
       const matchesSearch =
-        course?.subject.toLowerCase().includes(searchLower) ||
+        (c.courseName || course?.courseName || course?.subject || "").toLowerCase().includes(searchLower) ||
         student?.name.toLowerCase().includes(searchLower) ||
         teacher?.name.toLowerCase().includes(searchLower) ||
         c.classId.toLowerCase().includes(searchLower);
@@ -159,7 +160,26 @@ export default function ClassesManagement() {
     }
   };
 
-  const getCourseSubject = (id: string) => courses.find(c => c.courseId === id)?.subject || id;
+  const handleQuickStatusChange = async (classId: string, newStatus: string) => {
+    setUpdatingStatus(classId);
+    try {
+      await classAPI.updateStatus(classId, newStatus);
+      await fetchClasses();
+    } catch (error) {
+      console.error("Failed to update status:", error);
+      if (error instanceof APIError) {
+        alert(error.message);
+      }
+    } finally {
+      setUpdatingStatus(null);
+    }
+  };
+
+  const getCourseName = (cls: Class) => {
+    if (cls.courseName) return cls.courseName;
+    const course = courses.find(c => c.courseId === cls.courseId);
+    return course?.courseName || course?.subject || cls.courseId;
+  };
   const getStudentName = (id: string) => students.find(s => s.studentId === id)?.name || id;
   const getTeacherName = (id: string) => teachers.find(t => t.teacherId === id)?.name || id;
 
@@ -168,7 +188,9 @@ export default function ClassesManagement() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Classes Management</h1>
-          <p className="text-muted-foreground">Schedule and manage individual classes</p>
+          <p className="text-muted-foreground">
+            Scheduled classes appear automatically. Students and teachers can update status directly.
+          </p>
         </div>
         <Button onClick={handleAddClick} className="gap-2" disabled={loading || loadingRefs}>
           <Plus className="h-4 w-4" />
@@ -176,11 +198,16 @@ export default function ClassesManagement() {
         </Button>
       </div>
 
+      {/* Info banner */}
+      <div className="rounded-lg border border-amber-200 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-800 px-4 py-3 text-sm text-amber-800 dark:text-amber-300">
+        <strong>Note:</strong> If a teacher marks a class status by mistake, they have <strong>1 minute</strong> to change it. After that, only the admin can modify the status.
+      </div>
+
       {/* Filters */}
       <div className="flex gap-4">
         <div className="flex-1">
           <Input
-            placeholder="Search by subject, student, or teacher..."
+            placeholder="Search by course name, student, or teacher..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -193,6 +220,7 @@ export default function ClassesManagement() {
             <SelectItem value="all">All Status</SelectItem>
             <SelectItem value="Scheduled">Scheduled</SelectItem>
             <SelectItem value="Completed">Completed</SelectItem>
+            <SelectItem value="Postponed">Postponed</SelectItem>
             <SelectItem value="Cancelled">Cancelled</SelectItem>
           </SelectContent>
         </Select>
@@ -209,9 +237,11 @@ export default function ClassesManagement() {
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-muted/50 border-b border-border">
-              <th className="px-6 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Class Details</th>
+              <th className="px-6 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Course Name</th>
+              <th className="px-6 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Date & Time</th>
               <th className="px-6 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Student</th>
               <th className="px-6 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Teacher</th>
+              <th className="px-6 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Duration</th>
               <th className="px-6 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Status</th>
               <th className="px-6 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Actions</th>
             </tr>
@@ -220,15 +250,39 @@ export default function ClassesManagement() {
             {filteredClasses.map((cls) => (
               <tr key={cls.classId} className="hover:bg-muted/30 transition-colors">
                 <td className="px-6 py-4">
-                  <div className="flex flex-col">
-                    <span className="font-medium text-card-foreground">{getCourseSubject(cls.courseId)}</span>
-                    <span className="text-xs text-muted-foreground">{formatDateTime(cls.startDateTime)}</span>
+                  <div className="flex items-center gap-2">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 shrink-0">
+                      <BookOpen className="h-4 w-4 text-primary" />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="font-medium text-card-foreground">{getCourseName(cls)}</span>
+                      <span className="text-xs text-muted-foreground">{cls.classId}</span>
+                    </div>
                   </div>
                 </td>
+                <td className="px-6 py-4 text-sm text-muted-foreground">{formatDateTime(cls.startDateTime)}</td>
                 <td className="px-6 py-4 text-sm text-card-foreground">{getStudentName(cls.studentId)}</td>
                 <td className="px-6 py-4 text-sm text-card-foreground">{getTeacherName(cls.teacherId)}</td>
+                <td className="px-6 py-4 text-sm text-muted-foreground">{cls.durationMinutes} min</td>
                 <td className="px-6 py-4">
-                  <StatusBadge status={cls.status} />
+                  {updatingStatus === cls.classId ? (
+                    <Loader className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Select
+                      value={cls.status}
+                      onValueChange={(value) => handleQuickStatusChange(cls.classId, value)}
+                    >
+                      <SelectTrigger className="w-32 h-7 text-xs">
+                        <StatusBadge status={cls.status} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Scheduled">Scheduled</SelectItem>
+                        <SelectItem value="Completed">Completed</SelectItem>
+                        <SelectItem value="Postponed">Postponed</SelectItem>
+                        <SelectItem value="Cancelled">Cancelled</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex gap-2">
@@ -293,7 +347,7 @@ export default function ClassesManagement() {
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label>Course (Subject) *</Label>
+                <Label>Course *</Label>
                 <Select
                   value={formData.courseId || ""}
                   onValueChange={(value) => {
@@ -313,7 +367,7 @@ export default function ClassesManagement() {
                   <SelectContent>
                     {courses.map((c) => (
                       <SelectItem key={c.courseId} value={c.courseId}>
-                        {c.subject} ({getStudentName(c.studentId)})
+                        {c.courseName || c.subject} ({getStudentName(c.studentId)})
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -356,6 +410,7 @@ export default function ClassesManagement() {
                   <SelectContent>
                     <SelectItem value="Scheduled">Scheduled</SelectItem>
                     <SelectItem value="Completed">Completed</SelectItem>
+                    <SelectItem value="Postponed">Postponed</SelectItem>
                     <SelectItem value="Cancelled">Cancelled</SelectItem>
                   </SelectContent>
                 </Select>

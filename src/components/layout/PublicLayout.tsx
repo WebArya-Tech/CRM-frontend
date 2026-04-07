@@ -11,7 +11,7 @@ export function PublicLayout() {
       </main>
       <footer className="border-t border-border/40 bg-card/50 pt-20 pb-10">
         <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-3">
             <div className="space-y-6">
               <Link to="/" className="flex items-center gap-3 group">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl gradient-primary shadow-md">
@@ -34,28 +34,22 @@ export function PublicLayout() {
             <div>
               <h4 className="text-sm font-bold uppercase tracking-wider text-foreground mb-6">Quick Links</h4>
               <ul className="space-y-4">
-                {["Home", "About Us", "Our Services", "Contact"].map((item) => (
-                  <li key={item}>
-                    <Link to={item === "Home" ? "/" : `/${item.toLowerCase().replace(" ", "")}`} className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                      {item}
+                {[
+                  { label: "Home", path: "/" },
+                  { label: "About Us", path: "/about" },
+                  { label: "Our Services", path: "/services" },
+                  { label: "Contact", path: "/contact" }
+                ].map((item) => (
+                  <li key={item.label}>
+                    <Link to={item.path} className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                      {item.label}
                     </Link>
                   </li>
                 ))}
               </ul>
             </div>
 
-            <div>
-              <h4 className="text-sm font-bold uppercase tracking-wider text-foreground mb-6">Courses</h4>
-              <ul className="space-y-4">
-                {["Course 1", "Course 2", "Course 3", "Course 4"].map((item) => (
-                  <li key={item}>
-                    <a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                      {item}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
+
 
             <div className="space-y-6">
               <h4 className="text-sm font-bold uppercase tracking-wider text-foreground mb-6">Contact Us</h4>

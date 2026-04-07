@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
-import { Calendar, Clock, BookOpen, TrendingUp, Loader } from "lucide-react";
+import { Calendar, Clock, BookOpen, TrendingUp, Loader, CheckCircle, XCircle, PauseCircle } from "lucide-react";
 import { StatCard } from "@/components/StatCard";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
-import { courseAPI, classAPI, invoiceAPI } from "@/lib/api";
+import { courseAPI, classAPI, invoiceAPI, APIError } from "@/lib/api";
 import { calculateCycleProgress, formatCurrency, formatDateTime } from "@/lib/crmUtils";
 
 import { Course, Class } from "@/types/types";
@@ -15,26 +16,28 @@ export default function StudentDashboard() {
   const [myCourses, setMyCourses] = useState<Course[]>([]);
   const [myClasses, setMyClasses] = useState<Class[]>([]);
   const [invoices, setInvoices] = useState<any[]>([]);
+  const [updatingStatus, setUpdatingStatus] = useState<string | null>(null);
+
+  const fetchData = async () => {
+    if (!user || user.role !== "student") return;
+    setLoading(true);
+    try {
+      const [coursesResp, classesResp, invoicesResp] = await Promise.all([
+        courseAPI.getCoursesForStudent(),
+        classAPI.getClassesForStudent(),
+        invoiceAPI.getMyInvoices()
+      ]);
+      setMyCourses(coursesResp.data || []);
+      setMyClasses(classesResp.data || []);
+      setInvoices(invoicesResp.data || []);
+    } catch (err) {
+      console.error("Failed to fetch student data:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (!user || user.role !== "student") return;
-      setLoading(true);
-      try {
-        const [coursesResp, classesResp, invoicesResp] = await Promise.all([
-          courseAPI.getCoursesForStudent(),
-          classAPI.getClassesForStudent(),
-          invoiceAPI.getMyInvoices()
-        ]);
-        setMyCourses(coursesResp.data || []);
-        setMyClasses(classesResp.data || []);
-        setInvoices(invoicesResp.data || []);
-      } catch (err) {
-        console.error("Failed to fetch student data:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchData();
   }, [user]);
 
@@ -76,6 +79,27 @@ export default function StudentDashboard() {
   }, [invoices]);
 
   const getCurrentStudentName = () => user?.name || "Student";
+
+  const getCourseName = (cls: Class) => {
+    if (cls.courseName) return cls.courseName;
+    const course = myCourses.find((c) => c.courseId === cls.courseId);
+    return course?.courseName || course?.subject || cls.courseId || "Class";
+  };
+
+  const handleStatusUpdate = async (classId: string, newStatus: string) => {
+    setUpdatingStatus(classId);
+    try {
+      await classAPI.updateStatus(classId, newStatus);
+      await fetchData();
+    } catch (error) {
+      console.error("Failed to update status:", error);
+      if (error instanceof APIError) {
+        alert(error.message);
+      }
+    } finally {
+      setUpdatingStatus(null);
+    }
+  };
 
   if (loading) {
     return (
@@ -142,7 +166,7 @@ export default function StudentDashboard() {
                 <div className="flex items-start justify-between mb-4">
                   <div>
                     <h3 className="font-semibold text-card-foreground">
-                      {course.subject}
+                      {course.courseName || course.subject}
                     </h3>
                     <p className="text-sm text-muted-foreground">
                       Cycle: {course.cycleType}
@@ -203,7 +227,7 @@ export default function StudentDashboard() {
         </div>
       </div>
 
-      {/* Schedule */}
+      {/* Schedule — with status update */}
       <div className="rounded-xl bg-card border border-border/50 shadow-soft">
         <div className="border-b border-border px-6 py-4">
           <h2 className="font-semibold text-card-foreground flex items-center gap-2">
@@ -213,26 +237,68 @@ export default function StudentDashboard() {
         <div className="divide-y divide-border">
           {todayClasses.length > 0 ? (
             todayClasses.map((c) => {
+              const isUpdating = updatingStatus === c.classId;
               return (
                 <div
                   key={c.classId}
-                  className="flex items-center justify-between px-6 py-4"
+                  className="px-6 py-4 space-y-2"
                 >
-                  <div className="flex items-center gap-4">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                      <BookOpen className="h-4 w-4 text-primary" />
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                        <BookOpen className="h-4 w-4 text-primary" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-card-foreground">
+                          {getCourseName(c)}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {c.startDateTime ? new Date(c.startDateTime).toLocaleTimeString() : "—"} ·{" "}
+                          {c.durationMinutes}m
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-medium text-card-foreground">
-                        {c.subject || c.courseId || "Class"}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {c.startDateTime ? new Date(c.startDateTime).toLocaleTimeString() : "—"} ·{" "}
-                        {c.durationMinutes}m
-                      </p>
-                    </div>
+                    <StatusBadge status={c.status} />
                   </div>
-                  <StatusBadge status={c.status} />
+
+                  {/* Status update buttons for students */}
+                  {c.status === 'Scheduled' && (
+                    <div className="flex items-center gap-2 pl-14">
+                      {isUpdating ? (
+                        <Loader className="h-4 w-4 animate-spin text-muted-foreground" />
+                      ) : (
+                        <>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="gap-1.5 text-xs h-7 text-green-600 hover:bg-green-50 dark:hover:bg-green-950/20"
+                            onClick={() => handleStatusUpdate(c.classId, "Completed")}
+                          >
+                            <CheckCircle className="h-3.5 w-3.5" />
+                            Completed
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="gap-1.5 text-xs h-7 text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/20"
+                            onClick={() => handleStatusUpdate(c.classId, "Postponed")}
+                          >
+                            <PauseCircle className="h-3.5 w-3.5" />
+                            Postponed
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="gap-1.5 text-xs h-7 text-destructive hover:bg-destructive/10"
+                            onClick={() => handleStatusUpdate(c.classId, "Cancelled")}
+                          >
+                            <XCircle className="h-3.5 w-3.5" />
+                            Cancelled
+                          </Button>
+                        </>
+                      )}
+                    </div>
+                  )}
                 </div>
               );
             })
@@ -244,10 +310,10 @@ export default function StudentDashboard() {
         </div>
       </div>
 
-      {/* History */}
+      {/* Details */}
       <div className="rounded-xl bg-card border border-border/50 shadow-soft overflow-hidden">
         <div className="border-b border-border px-6 py-4">
-          <h2 className="font-semibold text-card-foreground">Class History</h2>
+          <h2 className="font-semibold text-card-foreground">Class Details</h2>
         </div>
         {myClasses.length === 0 ? (
           <div className="px-6 py-8 text-center text-muted-foreground">
@@ -262,7 +328,7 @@ export default function StudentDashboard() {
                     Date
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                    Subject
+                    Course Name
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
                     Duration
@@ -282,8 +348,8 @@ export default function StudentDashboard() {
                       <td className="px-6 py-4 text-sm text-card-foreground">
                         {c.startDateTime ? formatDateTime(c.startDateTime) : "—"}
                       </td>
-                      <td className="px-6 py-4 text-sm text-muted-foreground">
-                        {c.subject || c.courseId || "—"}
+                      <td className="px-6 py-4 text-sm text-muted-foreground font-medium">
+                        {getCourseName(c)}
                       </td>
                       <td className="px-6 py-4 text-sm text-muted-foreground">
                         {c.durationMinutes}m

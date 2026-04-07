@@ -4,6 +4,7 @@ export interface Teacher {
   email: string;
   mobile: string;
   subjects: string[];
+  grades?: string[];
   compensationPerHour: number;
   compensationPerHourHigh?: number;
   dateOfJoining: string;
@@ -38,15 +39,26 @@ export interface Student {
   updatedBy: string;
 }
 
+export interface WeeklySlot {
+  day: string;
+  time: string;
+}
+
 export interface Course {
   courseId: string;
+  courseName: string;
+  classType: "one-on-one" | "group";
   studentId: string;
-  subject: string;
+  subject?: string;
   teacherId: string;
+  paymentType: "prepaid" | "postpaid";
+  currency: string;
+  billingDate?: string;
   timeSlot1?: string;
   timeSlot2?: string;
   timeSlot3?: string;
-  cycleType: "6hrs" | "8hrs" | "12hrs" | "16hrs" | "monthly";
+  weeklySlots?: WeeklySlot[];
+  cycleType: "hourly" | "monthly" | "6hrs" | "8hrs" | "12hrs" | "16hrs";
   cycleTargetHours?: number;
   billingRatePerHour: number;
   billingRatePerHourHigh?: number;
@@ -67,6 +79,7 @@ export interface Class {
   studentId: string;
   studentName?: string; 
   courseId: string;
+  courseName?: string;
   subject?: string;
   teacherId: string;
   startDateTime: string;
@@ -75,7 +88,10 @@ export interface Class {
   activity?: string;
   comments?: string;
   createdByRole: "Admin" | "Teacher";
-  status: "Scheduled" | "Completed" | "Cancelled";
+  status: "Scheduled" | "Completed" | "Cancelled" | "Postponed";
+  statusChangedAt?: string;
+  statusChangedBy?: string;
+  statusChangedByRole?: "Admin" | "Teacher" | "Student";
   createdAt: string;
   createdBy: string;
   updatedAt: string;

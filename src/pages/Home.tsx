@@ -1,8 +1,10 @@
+import { useState, useEffect } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { GraduationCap, Users, BookOpen, Award, ArrowRight, CheckCircle, Star } from "lucide-react";
+import { GraduationCap, Users, BookOpen, Award, ArrowRight, CheckCircle, Star, Loader } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
+import { publicServiceAPI } from "@/lib/api";
 
 const highlights = [
   { icon: Users, value: "5000+", label: "Students Enrolled" },
@@ -22,6 +24,22 @@ const features = [
 
 export default function Home() {
   const { isAuthenticated, user } = useAuth();
+  const [courses, setCourses] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await publicServiceAPI.getAll();
+        setCourses(response.data?.slice(0, 3) || []);
+      } catch (error) {
+        console.error("Failed to fetch courses:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCourses();
+  }, []);
 
   // Redirect authenticated users to their dashboard
   if (isAuthenticated && user) {
@@ -167,33 +185,42 @@ export default function Home() {
               className="relative rounded-3xl overflow-hidden gradient-primary p-1"
             >
               <div className="bg-card rounded-[1.4rem] p-8 lg:p-10">
-                <h3 className="text-2xl font-bold text-foreground mb-6">Start Your Journey Today</h3>
+                <h3 className="text-2xl font-bold text-foreground mb-6">Popular Programs</h3>
                 <p className="text-muted-foreground mb-8 text-lg">
                   Join hundreds of successful students who achieved their dream scores with our guidance.
                 </p>
                 
                 <div className="space-y-4">
-                  {[
-                    { title: "Course 1 Success", desc: "Top 500 National Rank Achievers", color: "bg-blue-500/10 text-blue-600" },
-                    { title: "Course 2 Result", desc: "98% students achieved target scores", color: "bg-emerald-500/10 text-emerald-600" },
-                    { title: "Course 3 Outcome", desc: "Average improvement: 35%", color: "bg-amber-500/10 text-emerald-600" }
-                  ].map((item, i) => (
-                    <motion.div 
-                      key={item.title}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.5, delay: 0.5 + i * 0.1 }}
-                      className="group flex items-center justify-between rounded-2xl border border-border/50 bg-muted/30 p-5 hover:border-primary/30 hover:bg-primary/5 transition-all duration-300"
-                    >
-                      <div>
-                        <p className="font-bold text-foreground">{item.title}</p>
-                        <p className="text-sm text-muted-foreground">{item.desc}</p>
-                      </div>
-                      <div className={`h-10 w-10 rounded-full ${item.color} flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity`}>
-                        <ArrowRight className="h-5 w-5" />
-                      </div>
-                    </motion.div>
-                  ))}
+                  {loading ? (
+                    <div className="flex justify-center py-10">
+                      <Loader className="h-8 w-8 animate-spin text-primary" />
+                    </div>
+                  ) : courses.length > 0 ? (
+                    courses.map((course, i) => (
+                      <motion.div 
+                        key={course._id}
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.5, delay: 0.5 + i * 0.1 }}
+                        className="group flex items-center justify-between rounded-2xl border border-border/50 bg-muted/30 p-5 hover:border-primary/30 hover:bg-primary/5 transition-all duration-300"
+                      >
+                        <div className="flex-1">
+                          <p className="font-bold text-foreground">{course.title}</p>
+                          <p className="text-sm text-muted-foreground line-clamp-1">{course.description}</p>
+                        </div>
+                        <div className="flex items-center gap-4">
+                           <span className="text-sm font-bold text-primary">{course.price}</span>
+                           <div className="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                             <ArrowRight className="h-5 w-5" />
+                           </div>
+                        </div>
+                      </motion.div>
+                    ))
+                  ) : (
+                    <div className="p-8 text-center border border-dashed rounded-xl bg-muted/20">
+                      <p className="text-muted-foreground">New programs coming soon!</p>
+                    </div>
+                  )}
                 </div>
 
                 <div className="mt-10 pt-8 border-t border-border">

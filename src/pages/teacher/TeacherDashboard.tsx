@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useCallback, useContext, useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { classAPI, courseAPI, studentAPI } from "@/lib/api";
 import { Class, Course, Student, User } from "@/types/types";
@@ -11,6 +11,7 @@ interface TeacherDashboardContextType {
   students: Student[];
   loading: boolean;
   error: string | null;
+  refetch: () => void;
 }
 
 const TeacherDashboardContext = createContext<TeacherDashboardContextType | undefined>(undefined);
@@ -23,34 +24,34 @@ export function TeacherDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const fetchData = useCallback(async () => {
     if (!user || user.role !== 'teacher') return;
 
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const [classesResp, coursesResp, studentsResp] = await Promise.all([
-          classAPI.getClassesForTeacher(),
-          courseAPI.getCoursesForTeacher(),
-          studentAPI.getStudentsForTeacher(),
-        ]);
+    try {
+      setLoading(true);
+      const [classesResp, coursesResp, studentsResp] = await Promise.all([
+        classAPI.getClassesForTeacher(),
+        courseAPI.getCoursesForTeacher(),
+        studentAPI.getStudentsForTeacher(),
+      ]);
 
-        setClasses(classesResp.data || []);
-        setCourses(coursesResp.data || []);
-        setStudents(studentsResp.data || []);
-        
-      } catch (err) {
-        console.error("Failed to fetch teacher data:", err);
-        setError("Could not load dashboard data. Please try refreshing the page.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
+      setClasses(classesResp.data || []);
+      setCourses(coursesResp.data || []);
+      setStudents(studentsResp.data || []);
+      
+    } catch (err) {
+      console.error("Failed to fetch teacher data:", err);
+      setError("Could not load dashboard data. Please try refreshing the page.");
+    } finally {
+      setLoading(false);
+    }
   }, [user]);
 
-  const value = { user, classes, courses, students, loading, error };
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const value = { user, classes, courses, students, loading, error, refetch: fetchData };
 
   return (
     <TeacherDashboardContext.Provider value={value}>

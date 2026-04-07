@@ -14,7 +14,6 @@ export default function TeacherLogin() {
   const { login } = useAuth();
   const [formData, setFormData] = useState({ 
     email: '', 
-    phone: '',
     password: '' 
   });
   const [loading, setLoading] = useState(false);
@@ -27,19 +26,12 @@ export default function TeacherLogin() {
     setError('');
 
     try {
-      // Use email if provided, otherwise use phone
-      const sanitizedPhone = formData.phone.replace(/[^\d]/g, '');
-      const loginIdentifier = formData.email || sanitizedPhone;
-      if (!loginIdentifier) {
-        throw new Error('Please provide email or phone number');
+      if (!formData.email) {
+        throw new Error('Please provide your email address');
       }
 
       // Use AuthContext login to populate user state properly
-      if (formData.email) {
-        await login(formData.email, formData.password);
-      } else {
-        await login(undefined, formData.password, sanitizedPhone);
-      }
+      await login(formData.email, formData.password);
 
       navigate('/teacher');
     } catch (err) {
@@ -80,25 +72,14 @@ export default function TeacherLogin() {
               )}
 
               <div>
-                <label className="text-sm font-medium">Email Address or Phone Number</label>
-                <div className="space-y-2">
-                  <Input
-                    type="email"
-                    placeholder="teacher@example.com"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value, phone: '' })}
-                    disabled={loading}
-                  />
-                  <div className="text-center text-xs text-gray-500">OR</div>
-                  <Input
-                    type="tel"
-                    placeholder="(123) 456-7890"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value, email: '' })}
-                    disabled={loading}
-                  />
-                </div>
-                <p className="text-xs text-gray-500 mt-2">Enter either your email address or phone number</p>
+                <label className="text-sm font-medium">Email Address</label>
+                <Input
+                  type="email"
+                  placeholder="teacher@example.com"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  disabled={loading}
+                />
               </div>
 
               <div>
@@ -133,12 +114,7 @@ export default function TeacherLogin() {
             </form>
 
             <div className="mt-6 space-y-3 text-center text-sm">
-              <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-3">
-                <p className="font-semibold text-amber-900 dark:text-amber-100 mb-2">Internal CRM Access</p>
-                <p className="text-amber-800 dark:text-amber-200 text-xs">
-                  Teachers are added by the Admin. If you haven't received your credentials, please contact the administrator.
-                </p>
-              </div>
+
 
               <div className="flex justify-between gap-2">
                 <Link to="/admin-login" className="flex-1">

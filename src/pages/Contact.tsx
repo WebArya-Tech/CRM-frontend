@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { MapPin, Phone, Mail, Clock } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, Loader, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { contactAPI } from "@/lib/api";
+import { motion } from "framer-motion";
 
 const contactInfo = [
   { icon: MapPin, label: "Address", value: "Assured Experts, No. 81, Ground Floor, Share Space, Borewell Road, Whitefield, Bangalore - 560066" },
@@ -12,16 +14,33 @@ const contactInfo = [
   { icon: Clock, label: "Hours", value: "Mon - Sat: 8:00 AM - 8:00 PM" },
 ];
 
-import { motion } from "framer-motion";
-
 export default function Contact() {
   const { toast } = useToast();
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({ title: "Message sent!", description: "We'll get back to you within 24 hours." });
-    setForm({ name: "", email: "", phone: "", message: "" });
+    setLoading(true);
+    
+    try {
+      await contactAPI.submitInquiry(form);
+      toast({ 
+        title: "Message sent!", 
+        description: "Your message has been received. We'll get back to you within 24 hours.",
+        className: "bg-success text-success-foreground border-success"
+      });
+      setForm({ name: "", email: "", phone: "", message: "" });
+    } catch (error) {
+      console.error("Contact error:", error);
+      toast({ 
+        title: "Error", 
+        description: "Failed to send message. Please try again later.", 
+        variant: "destructive" 
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -96,8 +115,18 @@ export default function Contact() {
                     className="px-4 py-3 rounded-xl border-border/60 focus:ring-primary/20 focus:border-primary bg-muted/30"
                   />
                 </div>
-                <Button type="submit" className="w-full h-14 text-lg font-bold gradient-primary border-0 text-primary-foreground shadow-xl hover:shadow-primary/20 transition-all">
-                  Send Message
+                <Button type="submit" disabled={loading} className="w-full h-14 text-lg font-bold gradient-primary border-0 text-primary-foreground shadow-xl hover:shadow-primary/20 transition-all">
+                  {loading ? (
+                    <>
+                      <Loader className="mr-2 h-5 w-5 animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="mr-2 h-5 w-5" />
+                      Send Message
+                    </>
+                  )}
                 </Button>
               </form>
             </div>
